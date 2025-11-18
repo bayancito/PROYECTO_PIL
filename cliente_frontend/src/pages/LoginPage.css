@@ -1,0 +1,75 @@
+/* En: src/pages/LoginPage.css */
+
+/* Contenedor principal del formulario */
+.login-container {
+  width: 100%;
+  max-width: 400px; /* Ancho máximo del formulario */
+  
+  /* Centrar el formulario en la página (respecto al 'App-header') */
+  margin: 40px auto; 
+  
+  padding: 30px;
+  background-color: #1e1e24; /* Un fondo un poco más oscuro */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid #444;
+}
+
+/* Título "Iniciar Sesión" */
+.login-container h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #61dafb; /* Azul de React */
+}
+
+/* Contenedor para cada grupo (label + input) */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #ccc; /* Color de texto más suave */
+}
+
+.form-group input {
+  width: 100%; /* Ocupa todo el ancho del contenedor */
+  padding: 12px;
+  border: 1px solid #555;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  font-size: 1em;
+  
+  /* Para que el 'width: 100%' no se desborde por el padding */
+  box-sizing: border-box; 
+}
+
+/* Botón de "Entrar" */
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #61dafb; /* Azul de React */
+  color: #1e1e24; /* Texto oscuro */
+  font-weight: bold;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-button:hover {
+  background-color: #52bade; /* Un poco más oscuro al pasar el mouse */
+}
+
+/* Mensaje de error (ej: "Credenciales inválidas") */
+.login-error {
+  color: #ff6b6b; /* Rojo para errores */
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+}

@@ -1,0 +1,16 @@
+# Archivos de sistema y temporales
+__pycache__/
+*.pyc
+.DS_Store
+
+# Base de datos (Opcional: si quieres guardarla en la nube, borra esta línea)
+db.sqlite3
+
+# Frontend - Dependencias gigantes
+node_modules/
+build/
+.env
+
+# Backend - Entornos virtuales (si usaras uno)
+venv/
+env/
