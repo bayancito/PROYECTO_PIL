@@ -1,0 +1,96 @@
+.hero-container {
+  /* Imagen de fondo con filtro oscuro */
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), 
+              url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Parallax */
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 40px 20px;
+}
+
+.hero-content { text-align: center; margin-bottom: 60px; max-width: 900px; }
+
+.hero-content h1 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300; /* Letra FINA */
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.hero-content p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  z-index: 2;
+}
+
+/* TARJETAS */
+.feature-card {
+  background-color: rgba(0, 61, 165, 0.85); /* Azul PIL */
+  height: 240px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.feature-card:hover {
+  background-color: #DA291C; /* Rojo PIL */
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.icon-container { font-size: 3.5rem; margin-bottom: 20px; color: white; }
+
+.feature-card h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* BOTÓN */
+.cta-container { margin-top: 50px; }
+
+.cta-button {
+  background-color: white;
+  color: #333;
+  padding: 15px 50px;
+  border-radius: 50px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.cta-button:hover { transform: scale(1.05); color: #003DA5; }

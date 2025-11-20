@@ -24,6 +24,10 @@ class Vehiculo(models.Model):
         return self.placa
 
 class Ruta(models.Model):
+    # --- ¡AÑADE ESTA LÍNEA! ---
+    conductor = models.ForeignKey('Conductor', on_delete=models.CASCADE, null=True, blank=True)
+    # ---------------------------
+    
     puntos_de_entrega = models.TextField() 
     distancia = models.DecimalField(max_digits=10, decimal_places=2)
     tiempo_estimado = models.IntegerField() 

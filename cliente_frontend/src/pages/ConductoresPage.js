@@ -62,40 +62,71 @@ function ConductoresPage() {
 
   // El return (JSX) está perfecto, no necesita cambios
   return (
-    <div>
-      {/* --- Formulario de Conductores --- */}
-      <h2>Añadir Nuevo Conductor</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre: </label>
-          <input
-            type="text"
-            value={nombre}
-            onChange={e => setNombre(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Licencia: </label>
-          <input
-            type="text"
-            value={licencia}
-            onChange={e => setLicencia(e.target.value)}
-          />
-        </div>
-        <button type="submit">Guardar Conductor</button>
-      </form>
+    <div className="page-container"> {/* Contenedor principal */}
+      
+      <div className="content-card">
+        <h1 className="page-title">Gestión de Conductores</h1>
+        
+        {/* Formulario Estilizado */}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Nombre Completo:</label>
+            <input
+              type="text"
+              className="form-input" // Clase nueva
+              placeholder="Ej. Juan Pérez"
+              value={nombre}
+              onChange={e => setNombre(e.target.value)}
+            />
+          </div>
+          
+          <div className="form-group">
+            <label className="form-label">N° de Licencia:</label>
+            <input
+              type="text"
+              className="form-input" // Clase nueva
+              placeholder="Ej. 1234567 LP"
+              value={licencia}
+              onChange={e => setLicencia(e.target.value)}
+            />
+          </div>
+          
+          <div style={{ textAlign: 'right' }}>
+            <button type="submit" className="btn btn-primary">
+              Guardar Conductor
+            </button>
+          </div>
+        </form>
+      </div>
 
-      <hr style={{ margin: '40px 0' }} />
-
-      {/* --- Lista de Conductores --- */}
-      <h1>Lista de Conductores</h1>
-      <ul>
-        {conductores.map(conductor => (
-          <li key={conductor.id}>
-            <strong>{conductor.nombre}</strong> - Licencia: {conductor.licencia}
-          </li>
-        ))}
-      </ul>
+      {/* Lista Estilizada */}
+      <div className="content-card">
+        <h2 className="section-title">Conductores Registrados</h2>
+        
+        {conductores.length === 0 ? (
+          <p style={{ color: '#888', fontStyle: 'italic' }}>No hay conductores registrados aún.</p>
+        ) : (
+          <ul className="data-list">
+            {conductores.map(conductor => (
+              <li key={conductor.id} className="data-item">
+                <div>
+                  <strong>{conductor.nombre}</strong>
+                  <div style={{ fontSize: '0.85rem', color: '#666' }}>Licencia: {conductor.licencia}</div>
+                </div>
+                <span style={{ 
+                  padding: '5px 10px', 
+                  borderRadius: '15px', 
+                  fontSize: '0.8rem',
+                  backgroundColor: conductor.estado === 'disponible' ? '#d4edda' : '#f8d7da',
+                  color: conductor.estado === 'disponible' ? '#155724' : '#721c24'
+                }}>
+                  {conductor.estado}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

@@ -4,11 +4,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 
-# Creamos un router
+# 1. Creamos el Router
 router = DefaultRouter()
 
-# Registramos nuestros ViewSets con el router
-# El router se encarga de crear las URLs automáticamente
+# 2. Registramos TODOS los ViewSets (¡Esto es lo que probablemente faltaba!)
 router.register(r'conductores', views.ConductorViewSet)
 router.register(r'vehiculos', views.VehiculoViewSet)
 router.register(r'rutas', views.RutaViewSet)
@@ -18,22 +17,22 @@ router.register(r'categorias', views.CategoriaViewSet)
 router.register(r'productos', views.ProductoViewSet)
 router.register(r'detalles-pedido', views.DetallePedidoViewSet)
 
-# Las URLs de la API ahora son generadas automáticamente por el router
+# 3. Definimos las URLs
 urlpatterns = [
-    # Incluye todas las URLs del router (como /api/conductores/)
+    # --- URLs automáticas del Router (conductores, productos, etc.) ---
     path('api/', include(router.urls)),
     
-    # --- ¡AÑADE ESTA LÍNEA PARA TU VISTA PERSONALIZADA! ---
+    # --- URL personalizada de Logística ---
     path('api/logistica/asignar-ruta/', views.asignar_ruta, name='asignar_ruta'),
+    
+    # --- URL personalizada de Login ---
+    path('api/login/', views.login_view, name='login'),
+    
+    # --- URL personalizada de Mi Ruta (Conductor) ---
+    path('api/mi-ruta/', views.mi_ruta_view, name='mi_ruta'),
+
+     # --- ¡NUEVA URL DE REPORTES! ---
+    path('api/reportes/', views.reportes_view, name='reportes'),
 ]
 
-urlpatterns = [
-    # URLs del router (api/conductores/, api/pedidos/, etc.)
-    path('api/', include(router.urls)),
-    
-    # URL de logística (la que ya tenías)
-    path('api/logistica/asignar-ruta/', views.asignar_ruta, name='asignar_ruta'),
-    
-    # --- ¡NUEVA URL DE LOGIN! ---
-    path('api/login/', views.login_view, name='login'),
-]
+
