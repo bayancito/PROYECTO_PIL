@@ -1,35 +1,27 @@
 // En: src/pages/LogisticaPage.js
 
 import React, { useState, useEffect } from 'react';
-// --- CAMBIO 1 ---
-// import axios from 'axios'; // Ya no usamos axios
-import apiClient from '../api'; // Usamos nuestra instancia con interceptor
-
-// --- ¡NUEVAS IMPORTACIONES PARA EL MAPA! ---
+import apiClient from '../api';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-// (Arreglo para el ícono del marcador)
+
+// Fix iconos
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-// ------------------------------------------
 
-// --- CAMBIO 2 ---
-// URLs relativas (la base está en api.js)
 const API_PEDIDOS = '/pedidos/';
 const API_CONDUCTORES = '/conductores/';
 const API_VEHICULOS = '/vehiculos/';
 const API_ASIGNAR_RUTA = '/logistica/asignar-ruta/';
 
-// Coordenadas de Cochabamba para centrar el mapa
 const centroCochabamba = [-17.393879, -66.156944];
 
 function LogisticaPage() {
-  // (Estados... sin cambios)
   const [pedidos, setPedidos] = useState([]);
   const [conductores, setConductores] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
@@ -40,10 +32,9 @@ function LogisticaPage() {
   const fetchData = () => {
     setLoading(true);
     Promise.all([
-      // --- CAMBIO 3 ---
-      apiClient.get(API_PEDIDOS),      // Era axios.get
-      apiClient.get(API_CONDUCTORES), // Era axios.get
-      apiClient.get(API_VEHICULOS)    // Era axios.get
+      apiClient.get(API_PEDIDOS),
+      apiClient.get(API_CONDUCTORES),
+      apiClient.get(API_VEHICULOS)
     ])
     .then(([responsePedidos, responseConductores, responseVehiculos]) => {
       setPedidos(responsePedidos.data);
@@ -52,38 +43,28 @@ function LogisticaPage() {
       setLoading(false);
     })
     .catch(error => {
-      console.error("Error al cargar datos de logística:", error);
+      console.error("Error al cargar datos:", error);
       setLoading(false);
     });
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
-  // (Filtros... sin cambios)
   const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
   const conductoresDisponibles = conductores.filter(c => c.estado === 'disponible');
   const pedidosEnCamino = pedidos.filter(p => p.estado === 'en_camino' && p.latitud && p.longitud);
 
   const handleAsignarRuta = (event) => {
     event.preventDefault();
-    // (Validaciones... sin cambios)
-    if (pedidosSeleccionados.length === 0) {
-      alert("Seleccione al menos un pedido.");
-      return;
-    }
-    if (!conductorSeleccionado) {
-      alert("Seleccione un conductor.");
-      return;
-    }
+    if (pedidosSeleccionados.length === 0) { alert("Seleccione al menos un pedido."); return; }
+    if (!conductorSeleccionado) { alert("Seleccione un conductor."); return; }
+    
     const datosAsignacion = {
       conductor_id: conductorSeleccionado,
       pedido_ids: pedidosSeleccionados
     };
     
-    // --- CAMBIO 4 ---
-    apiClient.post(API_ASIGNAR_RUTA, datosAsignacion) // Era axios.post
+    apiClient.post(API_ASIGNAR_RUTA, datosAsignacion)
       .then(response => {
         alert(response.data.mensaje); 
         setPedidosSeleccionados([]);
@@ -91,103 +72,117 @@ function LogisticaPage() {
         fetchData(); 
       })
       .catch(error => {
-        console.error("¡Error al asignar la ruta!", error);
-        if (error.response) {
-          alert(`Error: ${JSON.stringify(error.response.data)}`);
-        } else {
-          alert("Error de conexión al asignar la ruta.");
-        }
+        console.error("Error:", error);
+        alert("Error al asignar la ruta.");
       });
   };
 
-  // (handleTogglePedido... sin cambios)
   const handleTogglePedido = (pedidoId) => {
-    setPedidosSeleccionados(prevSeleccionados => {
-      if (prevSeleccionados.includes(pedidoId)) {
-        return prevSeleccionados.filter(id => id !== pedidoId);
-      } else {
-        return [...prevSeleccionados, pedidoId];
-      }
+    setPedidosSeleccionados(prev => {
+      if (prev.includes(pedidoId)) return prev.filter(id => id !== pedidoId);
+      return [...prev, pedidoId];
     });
   };
 
-  if (loading) {
-    return <h2>Cargando datos de logística...</h2>;
-  }
+  if (loading) return <div className="page-container"><h2>Cargando panel...</h2></div>;
 
-  // (El return con el JSX/HTML... sin cambios)
   return (
-    <div>
-      <h2>Panel de Logística</h2>
+    <div className="page-container">
+      <h1 className="page-title">Panel de Logística</h1>
       
-      {/* --- MAPA DE MONITOREO --- */}
-      <h3>Monitoreo de Entregas (Pedidos "En Camino")</h3>
-      <MapContainer 
-        center={centroCochabamba} 
-        zoom={13} 
-        style={{ height: '400px', width: '100%', marginBottom: '30px' }}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {pedidosEnCamino.map(pedido => (
-          <Marker 
-            key={pedido.id} 
-            position={[pedido.latitud, pedido.longitud]}
-          >
-            <Popup>
-              <b>Pedido #{pedido.id}</b><br />
-              Cliente ID: {pedido.cliente}<br />
-              Estado: {pedido.estado}
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-      
-      <hr />
-
-      {/* --- Formulario de Asignación --- */}
-      <h2>Panel de Asignación de Rutas</h2>
-      <form onSubmit={handleAsignarRuta}>
-        
-        <h3>Pedidos Pendientes</h3>
-        <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #555', padding: '10px' }}>
-          {pedidosPendientes.length === 0 ? (
-            <p>(No hay pedidos pendientes)</p>
-          ) : (
-            pedidosPendientes.map(pedido => (
-              <div key={pedido.id}>
-                <input 
-                  type="checkbox"
-                  id={`pedido-${pedido.id}`}
-                  checked={pedidosSeleccionados.includes(pedido.id)}
-                  onChange={() => handleTogglePedido(pedido.id)}
-                />
-                <label htmlFor={`pedido-${pedido.id}`}>
-                  Pedido #{pedido.id} (Cliente ID: {pedido.cliente})
-                </label>
-              </div>
-            ))
-          )}
+      {/* TARJETA 1: MAPA DE MONITOREO */}
+      <div className="content-card">
+        <h2 className="section-title">Monitoreo en Tiempo Real</h2>
+        <div style={{ height: '400px', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid #ddd' }}>
+          <MapContainer center={centroCochabamba} zoom={13} style={{ height: '100%', width: '100%' }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {pedidosEnCamino.map(pedido => (
+              <Marker key={pedido.id} position={[pedido.latitud, pedido.longitud]}>
+                <Popup>
+                  <b>Pedido #{pedido.id}</b><br />Estado: {pedido.estado}
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </div>
+        <p style={{ marginTop: '10px', fontSize: '0.9rem', color: '#666' }}>
+          Mostrando {pedidosEnCamino.length} pedidos activos en ruta.
+        </p>
+      </div>
+      
+      {/* TARJETA 2: ASIGNACIÓN DE RUTAS */}
+      <div className="content-card">
+        <h2 className="section-title">Asignación de Rutas</h2>
+        <form onSubmit={handleAsignarRuta}>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+            
+            {/* Columna Izquierda: Lista de Pedidos */}
+            <div>
+              <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>1. Seleccionar Pedidos Pendientes</h3>
+              <div style={{ 
+                maxHeight: '300px', 
+                overflowY: 'auto', 
+                border: '1px solid #eee', 
+                borderRadius: '8px',
+                backgroundColor: '#f9f9f9' 
+              }}>
+                {pedidosPendientes.length === 0 ? (
+                  <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>No hay pedidos pendientes.</div>
+                ) : (
+                  <ul className="data-list">
+                    {pedidosPendientes.map(pedido => (
+                      <li key={pedido.id} className="data-item" style={{ padding: '10px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', width: '100%', cursor: 'pointer' }}>
+                          <input 
+                            type="checkbox"
+                            checked={pedidosSeleccionados.includes(pedido.id)}
+                            onChange={() => handleTogglePedido(pedido.id)}
+                            style={{ marginRight: '10px', transform: 'scale(1.2)' }}
+                          />
+                          <div>
+                            <strong>Pedido #{pedido.id}</strong>
+                            <div style={{ fontSize: '0.8rem', color: '#666' }}>Cliente ID: {pedido.cliente}</div>
+                          </div>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
 
-        <h3 style={{ marginTop: '20px' }}>Asignar a Conductor</h3>
-        <select 
-          value={conductorSeleccionado}
-          onChange={e => setConductorSeleccionado(e.target.value)}
-        >
-          <option value="">Seleccione un conductor disponible...</option>
-          {conductoresDisponibles.map(conductor => (
-            <option key={conductor.id} value={conductor.id}>
-              {conductor.nombre} (Lic: {conductor.licencia})
-            </option>
-          ))}
-        </select>
+            {/* Columna Derecha: Conductor y Botón */}
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ fontSize: '1rem', marginBottom: '10px' }}>2. Asignar Conductor</h3>
+                <select 
+                  className="form-select"
+                  value={conductorSeleccionado}
+                  onChange={e => setConductorSeleccionado(e.target.value)}
+                >
+                  <option value="">-- Seleccione Conductor --</option>
+                  {conductoresDisponibles.map(conductor => (
+                    <option key={conductor.id} value={conductor.id}>
+                      {conductor.nombre} (Lic: {conductor.licencia})
+                    </option>
+                  ))}
+                </select>
+                {conductoresDisponibles.length === 0 && (
+                  <p style={{ color: '#e74c3c', fontSize: '0.85rem', marginTop: '5px' }}>
+                    ⚠ No hay conductores disponibles.
+                  </p>
+                )}
+              </div>
 
-        <button type="submit" style={{ display: 'block', marginTop: '30px', fontSize: '1.2em' }}>
-          Crear y Asignar Ruta
-        </button>
-      </form>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '20px' }}>
+                CREAR Y ASIGNAR RUTA
+              </button>
+            </div>
+
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

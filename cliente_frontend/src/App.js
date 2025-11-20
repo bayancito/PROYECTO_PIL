@@ -1,9 +1,13 @@
-import React, { useState } from 'react'; // <--- Importamos useState
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import './App.css';
-import './GeneralStyles.css';
+import './App.css'; // Importamos los estilos globales
+import './GeneralStyles.css'; // Importamos los estilos de formularios/tablas
 
-// Importamos las páginas
+// --- IMPORTACIÓN DE LA IMAGEN DEL LOGO ---
+// Asegúrate de que la imagen esté en src/assets/pil-logo.png
+import logoPil from './assets/pil-logo.png'; 
+
+// --- IMPORTACIÓN DE PÁGINAS ---
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import ConductoresPage from './pages/ConductoresPage';
@@ -13,7 +17,7 @@ import LogisticaPage from './pages/LogisticaPage';
 import ReportesPage from './pages/ReportesPage';
 import MiRutaPage from './pages/MiRutaPage';
 
-// Lógica de Autenticación
+// --- LÓGICA DE AUTENTICACIÓN ---
 const isAuthenticated = () => localStorage.getItem('token') !== null;
 const getUserRole = () => localStorage.getItem('rol');
 
@@ -21,6 +25,7 @@ const PrivateRoute = ({ children }) => {
   return isAuthenticated() ? children : <Navigate to="/login" />;
 };
 
+// Componente Botón de Cerrar Sesión
 const LogoutButton = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -33,51 +38,62 @@ const LogoutButton = () => {
 function AppContent() {
   const rol = getUserRole();
   
-  // 1. ESTADO: Controla si el menú está abierto (true) o cerrado (false)
+  // Estado para el menú lateral (hamburguesa)
   const [menuAbierto, setMenuAbierto] = useState(false);
-
-  // 2. FUNCIÓN: Alternar entre abierto/cerrado
-  const toggleMenu = () => {
-    setMenuAbierto(!menuAbierto);
-  };
-
-  // 3. FUNCIÓN: Cerrar el menú (útil al hacer clic en un enlace)
-  const closeMenu = () => {
-    setMenuAbierto(false);
-  };
+  
+  const toggleMenu = () => setMenuAbierto(!menuAbierto);
+  const closeMenu = () => setMenuAbierto(false);
 
   return (
     <div className="App">
       
       {isAuthenticated() && (
         <>
-          {/* --- BARRA DE NAVEGACIÓN (NAVBAR) --- */}
+          {/* --- BARRA DE NAVEGACIÓN SUPERIOR --- */}
           <nav className="navbar">
             
-            {/* Logo a la izquierda */}
+            {/* 1. LOGO (IMAGEN) A LA IZQUIERDA */}
             <div className="navbar-logo">
-              <Link to="/" className="nav-logo-link" onClick={closeMenu}>PIL</Link>
+              <Link to="/" className="nav-logo-link" onClick={closeMenu}>
+                <img src={logoPil} alt="PIL Andina" className="nav-logo-img" />
+              </Link>
             </div>
 
-            {/* Ícono de Hamburguesa a la derecha (Siempre visible) */}
+            {/* 2. ÍCONO HAMBURGUESA (Visible en móvil) */}
             <div className="menu-icon" onClick={toggleMenu}>
-              &#9776; {/* Carácter HTML de las 3 líneas */}
+              &#9776;
             </div>
 
+            {/* 3. ENLACES DE ESCRITORIO (Ocultos en móvil) */}
+            <div className="navbar-links desktop-only">
+              <Link to="/" className="nav-link">Inicio</Link>
+
+              {rol === 'admin' && (
+                <>
+                  <Link to="/conductores" className="nav-link">Conductores</Link>
+                  <Link to="/productos" className="nav-link">Productos</Link>
+                  <Link to="/pedidos" className="nav-link">Pedidos</Link>
+                  <Link to="/logistica" className="nav-link">Logística</Link>
+                  <Link to="/reportes" className="nav-link">Reportes</Link>
+                </>
+              )}
+
+              {rol === 'conductor' && (
+                <Link to="/mi-ruta" className="nav-link">Mi Ruta</Link>
+              )}
+              
+              <div style={{ marginLeft: '20px' }}><LogoutButton /></div>
+            </div>
           </nav>
 
-          {/* --- MENÚ LATERAL DESPLEGABLE (SIDEBAR) --- */}
-          {/* Si menuAbierto es true, agregamos la clase 'open' */}
+          {/* --- MENÚ LATERAL (SIDEBAR) --- */}
           <div className={`sidebar ${menuAbierto ? 'open' : ''}`}>
-            
-            {/* Botón X para cerrar */}
             <button className="close-btn" onClick={toggleMenu}>&times;</button>
             
             <div className="sidebar-content">
               <div className="sidebar-header">MENÚ</div>
-              
               <Link to="/" className="sidebar-link" onClick={closeMenu}>Inicio</Link>
-
+              
               {rol === 'admin' && (
                 <>
                   <Link to="/conductores" className="sidebar-link" onClick={closeMenu}>Conductores</Link>
@@ -91,19 +107,19 @@ function AppContent() {
               {rol === 'conductor' && (
                 <Link to="/mi-ruta" className="sidebar-link" onClick={closeMenu}>Mi Ruta</Link>
               )}
-              
-              <div style={{ marginTop: '30px' }}>
+
+              <div style={{ marginTop: '20px', padding: '0 15px' }}>
                 <LogoutButton />
               </div>
             </div>
           </div>
-
-          {/* FONDO OSCURO (Overlay) - Para cerrar al hacer clic afuera */}
+          
+          {/* FONDO OSCURO (OVERLAY) */}
           {menuAbierto && <div className="overlay" onClick={closeMenu}></div>}
         </>
       )}
 
-      {/* RUTAS */}
+      {/* --- RUTAS DE LA APLICACIÓN --- */}
       <div style={{ padding: '0' }}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

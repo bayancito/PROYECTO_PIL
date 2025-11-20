@@ -1,75 +1,111 @@
 /* En: src/pages/LoginPage.css */
 
-/* Contenedor principal del formulario */
-.login-container {
+/* El contenedor ya tiene el fondo definido en el JS, 
+   aquí solo dejamos estilos auxiliares si fueran necesarios */
+.login-page-container {
+  /* Ya no ponemos background aquí para evitar el error de ruta */
+}
+
+.login-card {
+  background: white;
   width: 100%;
-  max-width: 400px; /* Ancho máximo del formulario */
-  
-  /* Centrar el formulario en la página (respecto al 'App-header') */
-  margin: 40px auto; 
-  
-  padding: 30px;
-  background-color: #1e1e24; /* Un fondo un poco más oscuro */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  border: 1px solid #444;
-}
-
-/* Título "Iniciar Sesión" */
-.login-container h2 {
+  max-width: 420px;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
   text-align: center;
-  margin-top: 0;
-  margin-bottom: 25px;
-  color: #61dafb; /* Azul de React */
+  animation: slideUp 0.5s ease-out;
 }
 
-/* Contenedor para cada grupo (label + input) */
+/* LOGO */
+.login-logo {
+  height: 80px;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+.login-card h2 {
+  color: var(--pil-blue); /* Azul PIL */
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-card p.subtitle {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  margin-bottom: 30px;
+}
+
+/* INPUTS */
 .form-group {
   margin-bottom: 20px;
+  text-align: left;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  font-weight: bold;
-  color: #ccc; /* Color de texto más suave */
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
 }
 
-.form-group input {
-  width: 100%; /* Ocupa todo el ancho del contenedor */
-  padding: 12px;
-  border: 1px solid #555;
-  background-color: #333;
-  color: white;
-  border-radius: 4px;
-  font-size: 1em;
-  
-  /* Para que el 'width: 100%' no se desborde por el padding */
-  box-sizing: border-box; 
-}
-
-/* Botón de "Entrar" */
-.login-button {
+.form-input {
   width: 100%;
-  padding: 12px;
-  background-color: #61dafb; /* Azul de React */
-  color: #1e1e24; /* Texto oscuro */
-  font-weight: bold;
-  font-size: 1.1em;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+}
+
+.form-input:focus {
+  border-color: var(--pil-blue);
+  background-color: white;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 61, 165, 0.1);
+}
+
+/* BOTÓN */
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--pil-red);
+  color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
 }
 
-.login-button:hover {
-  background-color: #52bade; /* Un poco más oscuro al pasar el mouse */
+.login-btn:hover {
+  background-color: #ac9391;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(218, 41, 28, 0.3);
 }
 
-/* Mensaje de error (ej: "Credenciales inválidas") */
-.login-error {
-  color: #ff6b6b; /* Rojo para errores */
-  text-align: center;
-  margin-bottom: 15px;
-  font-weight: bold;
+/* ERROR */
+.error-msg {
+  background-color: #fee2e2;
+  color: #736565;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  border: 1px solid #fca5a5;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

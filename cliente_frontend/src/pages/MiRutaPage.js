@@ -1,3 +1,5 @@
+// En: src/pages/MiRutaPage.js
+
 import React, { useState, useEffect } from 'react';
 import apiClient from '../api';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -11,6 +13,8 @@ L.Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
+
+const centroCochabamba = [-17.393879, -66.156944];
 
 function MiRutaPage() {
   const [datosRuta, setDatosRuta] = useState(null);
@@ -38,12 +42,10 @@ function MiRutaPage() {
   const marcarEntregado = (pedidoId) => {
     if (!window.confirm("¿Confirmar entrega del pedido?")) return;
 
-    // Actualizamos el pedido a "entregado"
-    // Usamos .patch para actualizar solo un campo
     apiClient.patch(`/pedidos/${pedidoId}/`, { estado: 'entregado' })
       .then(() => {
         alert("¡Pedido entregado!");
-        fetchRuta(); // Recargamos la lista
+        fetchRuta(); 
       })
       .catch(err => {
         alert("Error al actualizar pedido");
@@ -51,51 +53,76 @@ function MiRutaPage() {
       });
   };
 
-  if (loading) return <h2>Cargando tu ruta...</h2>;
-  if (error) return <h2>{error}</h2>;
+  if (loading) return <div className="page-container"><h2>Cargando tu ruta...</h2></div>;
+  if (error) return <div className="page-container"><h2 style={{color: 'red'}}>{error}</h2></div>;
   
-  // Si no hay datos o mensaje de "No tienes rutas"
+  // Mensaje si no hay rutas
   if (datosRuta && datosRuta.mensaje) {
-    return <h2>{datosRuta.mensaje}</h2>;
+    return (
+      <div className="page-container" style={{ textAlign: 'center', marginTop: '50px' }}>
+        <div className="content-card">
+          <h2 style={{ color: '#28a745' }}>✅ Todo listo</h2>
+          <p style={{ fontSize: '1.2rem' }}>{datosRuta.mensaje}</p>
+        </div>
+      </div>
+    );
   }
 
   const pedidos = datosRuta.pedidos || [];
-  const centroCochabamba = [-17.393879, -66.156944];
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Hola, {datosRuta.conductor}</h1>
-      <h3>Tu Ruta Activa (ID: {datosRuta.ruta_id})</h3>
+    <div className="page-container">
+      <h1 className="page-title">Hola, {datosRuta.conductor}</h1>
+      
+      {/* TARJETA DEL MAPA */}
+      <div className="content-card">
+        <h2 className="section-title">Tu Ruta Activa (ID: {datosRuta.ruta_id})</h2>
+        <div style={{ height: '350px', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid #ddd' }}>
+          <MapContainer center={centroCochabamba} zoom={13} style={{ height: '100%', width: '100%' }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {pedidos.map(pedido => (
+              pedido.latitud && (
+                <Marker key={pedido.id} position={[pedido.latitud, pedido.longitud]}>
+                  <Popup>
+                    <b>Pedido #{pedido.id}</b><br />
+                    Cliente ID: {pedido.cliente}
+                  </Popup>
+                </Marker>
+              )
+            ))}
+          </MapContainer>
+        </div>
+      </div>
 
-      {/* MAPA DE LA RUTA */}
-      <MapContainer center={centroCochabamba} zoom={13} style={{ height: '300px', width: '100%', marginBottom: '20px' }}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {/* LISTA DE ENTREGAS (Diseño de tarjetas individuales para móvil) */}
+      <h3 style={{ margin: '30px 0 15px 0', color: '#555' }}>
+        Entregas Pendientes: {pedidos.length}
+      </h3>
+      
+      <div style={{ display: 'grid', gap: '20px' }}>
         {pedidos.map(pedido => (
-          pedido.latitud && (
-            <Marker key={pedido.id} position={[pedido.latitud, pedido.longitud]}>
-              <Popup>
-                <b>Pedido #{pedido.id}</b><br />
-                Cliente: {pedido.cliente}
-              </Popup>
-            </Marker>
-          )
-        ))}
-      </MapContainer>
-
-      {/* LISTA DE PEDIDOS */}
-      <h3>Entregas Pendientes: {pedidos.length}</h3>
-      <div style={{ display: 'grid', gap: '15px' }}>
-        {pedidos.map(pedido => (
-          <div key={pedido.id} style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '8px', backgroundColor: '#2c2c34' }}>
-            <h4 style={{margin: '0 0 10px 0'}}>Pedido #{pedido.id}</h4>
-            <p><b>Estado:</b> {pedido.estado}</p>
-            <p><b>Cliente ID:</b> {pedido.cliente}</p>
+          <div key={pedido.id} className="content-card" style={{ marginBottom: '0', borderLeft: '5px solid #003DA5' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h4 style={{ margin: 0, fontSize: '1.2rem' }}>Pedido #{pedido.id}</h4>
+              <span style={{ 
+                backgroundColor: '#fff3cd', color: '#856404', 
+                padding: '5px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' 
+              }}>
+                {pedido.estado}
+              </span>
+            </div>
             
+            <div style={{ marginBottom: '20px', color: '#555' }}>
+              <p style={{ margin: '5px 0' }}><strong>Cliente ID:</strong> {pedido.cliente}</p>
+              <p style={{ margin: '5px 0' }}><strong>Coordenadas:</strong> {pedido.latitud}, {pedido.longitud}</p>
+            </div>
+
             <button 
               onClick={() => marcarEntregado(pedido.id)}
-              style={{ backgroundColor: '#28a745', color: 'white', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer', width: '100%' }}
+              className="btn btn-success" 
+              style={{ width: '100%', padding: '15px', fontSize: '1.1rem' }}
             >
-              Marcar como ENTREGADO
+              MARCAR COMO ENTREGADO
             </button>
           </div>
         ))}

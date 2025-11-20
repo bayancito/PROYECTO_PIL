@@ -152,3 +152,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 # ------------------------------------
 
+# En settings.py (al final)
+
+# URL base para acceder a los archivos multimedia
+MEDIA_URL = '/media/'
+
+# Carpeta física donde se guardarán
+MEDIA_ROOT = BASE_DIR / 'media'

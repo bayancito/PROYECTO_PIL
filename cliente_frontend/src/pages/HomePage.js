@@ -1,20 +1,34 @@
+// En: src/pages/HomePage.js
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './HomePage.css'; // Importa el CSS específico
-// Asegúrate de haber instalado los iconos: npm install react-icons
+import './HomePage.css'; 
 import { FaTruckMoving, FaBoxOpen, FaMapMarkedAlt, FaClipboardList } from 'react-icons/fa';
 
+// --- 1. IMPORTAMOS LA IMAGEN DESDE ASSETS ---
+// (Como estamos en 'pages', subimos un nivel con '../' para ir a 'assets')
+import bgImage from '../assets/pil-fabrica-bg.jpg';
+
 function HomePage() {
+
+  // --- 2. CREAMOS EL ESTILO DE FONDO AQUÍ ---
+  // Usamos la variable 'bgImage' que acabamos de importar
+  const heroStyle = {
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url(${bgImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed'
+  };
+
   return (
-    <div className="hero-container">
+    // --- 3. APLICAMOS EL ESTILO AL DIV ---
+    <div className="hero-container" style={heroStyle}>
       
-      {/* Título Principal */}
       <div className="hero-content">
-        <p>Logística Inteligente</p>
+        <p>LOGÍSTICA INTELIGENTE</p>
         <h1>Optimizamos la energía de tu distribución</h1>
       </div>
 
-      {/* Cuadrícula de Tarjetas */}
       <div className="features-grid">
         
         <Link to="/logistica" className="feature-card">
@@ -39,10 +53,9 @@ function HomePage() {
 
       </div>
 
-      {/* Botón de Acción */}
       <div className="cta-container">
         <Link to="/pedidos" className="cta-button">
-          Comenzar un Pedido
+          COMENZAR UN PEDIDO
         </Link>
       </div>
 

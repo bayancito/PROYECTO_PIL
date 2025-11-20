@@ -1,104 +1,152 @@
-/* Importamos fuentes */
+/* FUENTES MODERNAS (Lato para títulos finos, Montserrat para fuerza) */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700;800&display=swap');
-body, html {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* IMPORTANTE: Esto evita que aparezca la barra de scroll horizontal */
-}
+
+/* VARIABLES DE DISEÑO (PIL) */
 :root {
   --pil-blue: #003DA5;
-  --pil-red: #DA291C;
+  --pil-red: #0b0909;
   --text-dark: #333;
   --text-light: #fff;
   --bg-light: #f4f7f6;
 }
 
-body { margin: 0; font-family: 'Open Sans', sans-serif; background-color: var(--bg-light); }
+/* RESET GLOBAL */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--bg-light);
+  overflow-x: hidden; /* Evita el scroll horizontal si el menú se mueve */
+}
 
-/* --- NAVBAR SUPERIOR --- */
+/* --- NAVBAR --- */
 .navbar {
-  background-color: white; 
-  padding: 0 30px; 
-  height: 70px; 
+  background-color: white;
+  padding: 0 30px; /* Espacio lateral */
+  height: 80px;    /* Un poco más alta para que el logo respire */
   width: 100%;
-  display: flex; 
-  justify-content: space-between; /* Separa Logo e Ícono a los extremos */
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  position: sticky; 
-  top: 0; 
+  position: sticky;
+  top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Sombra suave */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Sombra sutil */
+  box-sizing: border-box;
 }
 
-/* Logo */
-.navbar-logo .nav-logo-link {
-  font-family: 'Montserrat', sans-serif; 
-  font-weight: 800; 
-  font-size: 1.8rem;
-  color: #aaa; /* Gris suave como en tu imagen */
-  text-decoration: none; 
-  letter-spacing: 2px;
-  text-transform: uppercase;
+/* ESTILOS DEL LOGO (IMAGEN) */
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
-/* Ícono Hamburguesa */
-.menu-icon { 
-  font-size: 2rem; 
-  cursor: pointer; 
-  color: #333; 
-  padding: 60px;
+.nav-logo-img {
+  height: 55px; /* Ajusta este valor según el tamaño de tu imagen */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+.nav-logo-img:hover { transform: scale(1.05); }
+
+/* ESTILOS DEL ÍCONO HAMBURGUESA */
+.menu-icon {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #333;
+  padding: 5px;
+  /* MARGEN DERECHO PARA QUE NO SE PEGUE AL BORDE */
+  margin-right: 15px; 
   transition: color 0.3s;
 }
 .menu-icon:hover { color: var(--pil-blue); }
 
+/* LINKS DE ESCRITORIO (Se ocultan en móvil) */
+.navbar-links { display: none; }
 
-/* --- MENÚ LATERAL (SIDEBAR) --- */
+/* --- MEDIA QUERY (PANTALLAS GRANDES) --- */
+@media (min-width: 992px) {
+  /* En PC ocultamos la hamburguesa y mostramos los links */
+  .menu-icon { display: none; }
+  .navbar-links.desktop-only { display: flex; align-items: center; }
+}
+
+/* ESTILO DE LOS LINKS (Escritorio) */
+.nav-link {
+  color: var(--pil-blue);
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  transition: color 0.3s;
+}
+.nav-link:hover { color: var(--pil-red); }
+
+/* BOTÓN LOGOUT (Escritorio) */
+.logout-btn {
+  color: #555;
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  transition: all 0.3s;
+}
+.logout-btn:hover { 
+  border-color: var(--pil-red); 
+  color: white; 
+  background-color: var(--pil-red);
+}
+
+/* --- SIDEBAR (MENÚ LATERAL) --- */
 .sidebar {
-  position: fixed; 
-  top: 0; 
-  /* Coincide con el width para esconderlo totalmente */
-  right: -260px; 
-  width: 260px; /* Un poco más delgado para que se vea mejor en móviles */
-  height: 100vh; /* 100vh asegura que cubra toda la altura de la pantalla */
-  background-color: white; 
-  
-  /* Sombra más fuerte a la izquierda para que se note el borde */
-  box-shadow: -5px 0 15px rgba(0,0,0,0.2); 
-  
-  z-index: 2000; 
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animación más suave */
-  display: flex; 
+  position: fixed;
+  top: 0;
+  /* Oculto a la derecha (ancho negativo) */
+  right: -280px; 
+  width: 280px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.15);
+  z-index: 2000;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animación fluida */
+  display: flex;
   flex-direction: column;
 }
 
-/* Cuando está abierto, lo pegamos EXACTAMENTE a la esquina derecha (0) */
-.sidebar.open { 
-  right: 0; 
+/* Clase para abrir el menú */
+.sidebar.open {
+  right: 0;
 }
 
-/* Botón de cerrar (X) */
-.close-btn { 
-  position: absolute; 
-  top: 15px; 
-  right: 20px; /* Ajustado para que no esté tan al borde */
-  font-size: 2rem; 
-  background: none; 
-  border: none; 
-  cursor: pointer; 
+/* Botón Cerrar (X) */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
   color: #555;
-  padding: 5px; /* Un poco de área para hacer clic fácil */
   transition: color 0.3s;
   z-index: 2001;
 }
+.close-btn:hover { color: var(--pil-red); }
 
-.close-btn:hover { 
-  color: var(--pil-red); 
-}
-/* Contenido del menú */
-.sidebar-content { 
-  display: flex; 
-  flex-direction: column; 
-  padding: 80px 30px 30px 30px; /* Padding superior alto para no chocar con la X */
+/* Contenido del Sidebar */
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  padding: 80px 20px 20px 20px;
   height: 100%;
 }
 
@@ -108,58 +156,53 @@ body { margin: 0; font-family: 'Open Sans', sans-serif; background-color: var(--
   color: #aaa;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
 }
 
-/* Enlaces del menú */
-.sidebar-link { 
-  text-decoration: none; 
-  color: var(--text-dark); 
-  font-family: 'Montserrat', sans-serif; 
-  font-weight: 600; 
+/* Links del Sidebar */
+.sidebar-link {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
   font-size: 1.1rem;
-  padding: 15px 0; 
-  border-bottom: 1px solid #f0f0f0; 
-  transition: all 0.3s;
+  padding: 15px 10px;
+  border-bottom: 1px solid #f9f9f9;
+  transition: all 0.2s;
 }
 
-.sidebar-link:hover { 
-  color: var(--pil-blue); 
-  padding-left: 10px; /* Efecto de movimiento */
+.sidebar-link:hover {
+  color: var(--pil-blue);
+  background-color: #f4f7f6;
+  padding-left: 15px;
 }
 
-/* Botón cerrar sesión dentro del menú */
-.logout-btn {
+/* Botón Logout (Móvil) */
+.sidebar .logout-btn {
   width: 100%;
-  color: white; 
-  background-color: #333; 
-  border: none; 
-  padding: 12px 15px;
-  font-weight: 700; 
-  cursor: pointer; 
-  font-family: 'Montserrat', sans-serif; 
-  text-transform: uppercase;
-  border-radius: 4px;
-  transition: background 0.3s;
+  background-color: #333;
+  color: white;
+  border: none;
+  margin-top: 10px;
 }
-.logout-btn:hover { background-color: var(--pil-red); }
+.sidebar .logout-btn:hover { background-color: var(--pil-red); }
 
-/* Fondo oscuro (Overlay) */
-.overlay { 
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background-color: rgba(0,0,0,0.5); /* Semitransparente */
-  z-index: 1500; 
-  backdrop-filter: blur(3px); /* Efecto borroso de fondo */
+/* Overlay (Fondo oscuro) */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1500;
+  backdrop-filter: blur(3px);
   animation: fadeIn 0.3s;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
+}   

@@ -1,28 +1,21 @@
 import React, { useState, useEffect } from 'react'; 
-// --- CAMBIO 1 ---
-// import axios from 'axios'; // Ya no usamos axios directamente
-import apiClient from '../api'; // Usamos nuestra instancia 'apiClient'
-
-// --- ¡NUEVAS IMPORTACIONES PARA EL MAPA! ---
+import apiClient from '../api'; 
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-// (Arreglo del ícono de Leaflet)
+
+// Fix iconos Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-// ------------------------------------------
 
-// --- CAMBIO 2 ---
-// URLs relativas (la base está en api.js)
 const API_CLIENTES = '/clientes/';
 const API_PRODUCTOS = '/productos/';
 const API_PEDIDOS = '/pedidos/';
 
-// --- Componente interno (sin cambios) ---
 function LocationMarker({ onLocationSelect }) {
   const [position, setPosition] = useState(null);
   useMapEvents({
@@ -31,18 +24,14 @@ function LocationMarker({ onLocationSelect }) {
       onLocationSelect(e.latlng);
     },
   });
-  return position === null ? null : (
-    <Marker position={position}></Marker>
-  );
+  return position === null ? null : <Marker position={position}></Marker>;
 }
-// ----------------------------------------------------
-
 
 function PedidosPage() {
-  // (Estados... sin cambios)
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
+  
   const [clienteSeleccionado, setClienteSeleccionado] = useState('');
   const [productoSeleccionado, setProductoSeleccionado] = useState('');
   const [cantidad, setCantidad] = useState(1); 
@@ -51,9 +40,8 @@ function PedidosPage() {
 
   useEffect(() => {
     Promise.all([
-      // --- CAMBIO 3 ---
-      apiClient.get(API_CLIENTES), // Era axios.get
-      apiClient.get(API_PRODUCTOS) // Era axios.get
+      apiClient.get(API_CLIENTES),
+      apiClient.get(API_PRODUCTOS)
     ])
     .then(([responseClientes, responseProductos]) => {
       setClientes(responseClientes.data);
@@ -64,14 +52,12 @@ function PedidosPage() {
       }
     })
     .catch(error => {
-      console.error("Error al cargar datos iniciales:", error);
+      console.error("Error al cargar datos:", error);
       setLoading(false);
     });
   }, []);
 
-  // (handleAñadirProducto... sin cambios, no usa axios)
   const handleAñadirProducto = () => {
-    // ... (lógica del carrito) ...
     if (!productoSeleccionado || cantidad <= 0) {
       alert("Seleccione un producto y una cantidad válida.");
       return;
@@ -93,20 +79,9 @@ function PedidosPage() {
   
   const handleGuardarPedido = (event) => {
     event.preventDefault(); 
-    
-    // (Validaciones... sin cambios)
-    if (!ubicacion) {
-      alert("Por favor, seleccione una ubicación en el mapa.");
-      return;
-    }
-    if (!clienteSeleccionado) {
-      alert("Por favor, seleccione un cliente.");
-      return;
-    }
-    if (carrito.length === 0) {
-      alert("Añada al menos un producto al pedido.");
-      return;
-    }
+    if (!ubicacion) { alert("Seleccione una ubicación en el mapa."); return; }
+    if (!clienteSeleccionado) { alert("Seleccione un cliente."); return; }
+    if (carrito.length === 0) { alert("Añada productos al pedido."); return; }
 
     const detallesFormateados = carrito.map(item => ({
       producto: item.productoId,
@@ -122,127 +97,122 @@ function PedidosPage() {
       longitud: parseFloat(ubicacion.lng.toFixed(6))
     };
 
-    // Enviamos a la API de Pedidos
-    // --- CAMBIO 4 ---
-    apiClient.post(API_PEDIDOS, nuevoPedido) // Era axios.post
+    apiClient.post(API_PEDIDOS, nuevoPedido)
       .then(response => {
         alert("¡Pedido guardado con éxito!");
         setClienteSeleccionado('');
         setCarrito([]);
-        setUbicacion(null); 
-        // (Aquí podríamos resetear el marcador del mapa, 
-        //  pero eso requiere más lógica, así que lo dejamos)
+        setUbicacion(null);
       })
       .catch(error => {
-          // (El 'alert' mejorado se queda)
-          console.error("¡Error al guardar el pedido!");
-          if (error.response) {
-            console.error("Respuesta del backend (error):", error.response.data);
-            const errorMsg = JSON.stringify(error.response.data);
-            alert(`Hubo un error al guardar: ${errorMsg}`);
-          } else {
-            console.error("Error desconocido:", error.message);
-            alert("Hubo un error desconocido. Revisa la consola (F12).");
-          }
-        });
+        console.error("Error:", error);
+        alert("Error al guardar el pedido.");
+      });
   };
 
   const centroCochabamba = [-17.393879, -66.156944];
 
-  if (loading) {
-    return <h2>Cargando datos del formulario...</h2>;
-  }
+  if (loading) return <div className="page-container"><h2>Cargando...</h2></div>;
 
-  // (El return con el JSX/HTML... sin cambios)
   return (
-    <div>
-      <h2>Crear Nuevo Pedido</h2>
-      <form onSubmit={handleGuardarPedido}>
+    <div className="page-container">
+      <h1 className="page-title">Crear Nuevo Pedido</h1>
+      
+      {/* TARJETA 1: Datos del Cliente y Mapa */}
+      <div className="content-card">
+        <h2 className="section-title">1. Ubicación y Cliente</h2>
         
-        {/* --- PASO 1: Selector de Clientes --- */}
-        <div>
-          <label>Cliente: </label>
+        <div className="form-group">
+          <label className="form-label">Seleccionar Cliente:</label>
           <select 
+            className="form-select" // Clase estilizada
             value={clienteSeleccionado} 
             onChange={e => setClienteSeleccionado(e.target.value)} 
           >
-            <option value="">Seleccione un cliente...</option>
+            <option value="">-- Seleccione --</option>
             {clientes.map(cliente => (
-              <option key={cliente.id} value={cliente.id}>
-                {cliente.nombre_cliente}
-              </option>
+              <option key={cliente.id} value={cliente.id}>{cliente.nombre_cliente}</option>
             ))}
           </select>
         </div>
 
-        {/* --- MAPA --- */}
-        <div style={{ margin: '20px 0' }}>
-          <label>Ubicación de entrega (haz clic en el mapa):</label>
-          <MapContainer 
-            center={centroCochabamba} 
-            zoom={13} 
-            style={{ height: '400px', width: '100%' }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <LocationMarker onLocationSelect={setUbicacion} />
-          </MapContainer>
+        <div className="form-group">
+          <label className="form-label">Ubicación de Entrega (Click en el mapa):</label>
+          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '2px solid #eee' }}>
+            <MapContainer center={centroCochabamba} zoom={13} style={{ height: '350px', width: '100%' }}>
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <LocationMarker onLocationSelect={setUbicacion} />
+            </MapContainer>
+          </div>
           {ubicacion && (
-            <p>Ubicación seleccionada: {ubicacion.lat.toFixed(4)}, {ubicacion.lng.toFixed(4)}</p>
+            <p style={{ marginTop: '10px', color: '#28a745', fontWeight: 'bold' }}>
+              📍 Ubicación seleccionada: {ubicacion.lat.toFixed(4)}, {ubicacion.lng.toFixed(4)}
+            </p>
           )}
         </div>
+      </div>
 
-        {/* --- PASO 2: Añadir Productos --- */}
-        <hr />
-        <div>
-          <label>Producto: </label>
-          <select 
-            value={productoSeleccionado} 
-            onChange={e => setProductoSeleccionado(e.target.value)} 
-          >
-            <option value="">Seleccione un producto...</option>
-            {productos.map(producto => (
-              <option key={producto.id} value={producto.id}>
-                {producto.nombre} (${producto.precio})
-              </option>
-            ))}
-          </select>
-          <input 
-            type="number" 
-            placeholder="Cantidad" 
-            style={{ marginLeft: '10px', width: '80px' }} 
-            value={cantidad} 
-            onChange={e => setCantidad(e.target.value)} 
-          />
+      {/* TARJETA 2: Productos */}
+      <div className="content-card">
+        <h2 className="section-title">2. Agregar Productos</h2>
+        
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div style={{ flex: 2 }}>
+            <label className="form-label">Producto:</label>
+            <select 
+              className="form-select" 
+              value={productoSeleccionado} 
+              onChange={e => setProductoSeleccionado(e.target.value)} 
+            >
+              <option value="">-- Producto --</option>
+              {productos.map(producto => (
+                <option key={producto.id} value={producto.id}>{producto.nombre} (${producto.precio})</option>
+              ))}
+            </select>
+          </div>
+          
+          <div style={{ flex: 1 }}>
+            <label className="form-label">Cantidad:</label>
+            <input 
+              type="number" 
+              className="form-input"
+              value={cantidad} 
+              onChange={e => setCantidad(e.target.value)} 
+            />
+          </div>
+          
           <button 
             type="button" 
-            style={{ marginLeft: '10px' }}
-            onClick={handleAñadirProducto} 
+            className="btn btn-primary" 
+            onClick={handleAñadirProducto}
+            style={{ marginBottom: '2px' }}
           >
-            Añadir al Pedido
+            + Añadir
           </button>
         </div>
+      </div>
 
-        {/* --- PASO 3: Carrito --- */}
-        <hr />
-        <h3>Productos en el Pedido</h3>
-        <ul>
-          {carrito.length === 0 ? (
-            <li>(Aún no hay productos)</li>
-          ) : (
-            carrito.map((item, index) => (
-              <li key={index}>
-                {item.cantidad} x {item.nombre} (@ ${item.precio} c/u)
+      {/* TARJETA 3: Resumen (Carrito) */}
+      {carrito.length > 0 && (
+        <div className="content-card">
+          <h2 className="section-title">3. Resumen del Pedido</h2>
+          <ul className="data-list">
+            {carrito.map((item, index) => (
+              <li key={index} className="data-item">
+                <strong>{item.nombre}</strong>
+                <span>{item.cantidad} x ${item.precio}</span>
               </li>
-            ))
-          )}
-        </ul>
+            ))}
+          </ul>
+          
+          <div style={{ marginTop: '30px', textAlign: 'right' }}>
+            <button onClick={handleGuardarPedido} className="btn btn-success">
+              CONFIRMAR PEDIDO
+            </button>
+          </div>
+        </div>
+      )}
 
-        <button type="submit">
-          Guardar Pedido Completo
-        </button>
-      </form>
     </div>
   );
 }

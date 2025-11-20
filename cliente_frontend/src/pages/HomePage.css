@@ -1,10 +1,9 @@
+/* En: src/pages/HomePage.css */
+
 .hero-container {
-  /* Imagen de fondo con filtro oscuro */
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), 
-              url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed; /* Parallax */
+  /* --- YA NO PONEMOS EL BACKGROUND AQUÍ --- */
+  /* Lo hemos movido al archivo .js para que encuentre la imagen correctamente */
+  
   min-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -12,17 +11,19 @@
   align-items: center;
   color: white;
   padding: 40px 20px;
+  position: relative;
 }
 
+/* El resto de los estilos se mantienen igual */
 .hero-content { text-align: center; margin-bottom: 60px; max-width: 900px; }
 
 .hero-content h1 {
   font-family: 'Lato', sans-serif;
-  font-weight: 300; /* Letra FINA */
+  font-weight: 300; 
   font-size: 4rem;
   line-height: 1.1;
   margin-bottom: 10px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 .hero-content p {
@@ -45,7 +46,7 @@
 
 /* TARJETAS */
 .feature-card {
-  background-color: rgba(0, 61, 165, 0.85); /* Azul PIL */
+  background-color: rgba(102, 104, 108, 0.85); /* Azul PIL */
   height: 240px;
   padding: 30px 20px;
   display: flex;
@@ -60,7 +61,7 @@
 }
 
 .feature-card:hover {
-  background-color: #DA291C; /* Rojo PIL */
+  background-color: #1c3de2; /* Rojo PIL */
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
