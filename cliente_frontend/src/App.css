@@ -1,41 +1,49 @@
-/* FUENTES MODERNAS (Lato para títulos finos, Montserrat para fuerza) */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700;800&display=swap');
+/* 1. IMPORTACIÓN DE FUENTES */
+/* Lato (fina y elegante), Montserrat (títulos fuertes), Open Sans (texto corrido) */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap');
 
-/* VARIABLES DE DISEÑO (PIL) */
+/* 2. VARIABLES GLOBALES (SISTEMA DE DISEÑO) */
 :root {
+  /* --- Colores Corporativos PIL --- */
   --pil-blue: #003DA5;
-  --pil-red: #0b0909;
+  --pil-red: #DA291C;
+  
+  /* --- Colores de Texto --- */
   --text-dark: #333;
   --text-light: #fff;
-  --bg-light: #f4f7f6;
+  
+  /* --- Interfaz Estilo Dashboard --- */
+  --bg-light: #f3f6fd; /* Fondo gris azulado muy suave y moderno */
+  --card-radius: 16px; /* Bordes redondeados para tarjetas */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05); /* Sombra sutil */
 }
 
-/* RESET GLOBAL */
+/* 3. RESET GLOBAL */
 body, html {
   margin: 0;
   padding: 0;
   font-family: 'Open Sans', sans-serif;
   background-color: var(--bg-light);
-  overflow-x: hidden; /* Evita el scroll horizontal si el menú se mueve */
+  overflow-x: hidden; /* Evita el scroll horizontal por el menú lateral */
 }
 
-/* --- NAVBAR --- */
+/* 4. BARRA DE NAVEGACIÓN (NAVBAR) */
 .navbar {
   background-color: white;
-  padding: 0 30px; /* Espacio lateral */
-  height: 80px;    /* Un poco más alta para que el logo respire */
+  padding: 0 30px;
+  height: 80px; /* Altura suficiente para el logo */
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
+  position: sticky; /* Se queda fija arriba al hacer scroll */
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Sombra sutil */
+  box-shadow: 0 2px 15px rgba(0,0,0,0.03); /* Sombra muy ligera */
   box-sizing: border-box;
 }
 
-/* ESTILOS DEL LOGO (IMAGEN) */
+/* Logo (Imagen) */
 .nav-logo-link {
   display: flex;
   align-items: center;
@@ -43,56 +51,66 @@ body, html {
 }
 
 .nav-logo-img {
-  height: 55px; /* Ajusta este valor según el tamaño de tu imagen */
+  height: 55px; /* Ajusta esto según tu logo */
   width: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
-.nav-logo-img:hover { transform: scale(1.05); }
 
-/* ESTILOS DEL ÍCONO HAMBURGUESA */
+.nav-logo-img:hover {
+  transform: scale(1.05);
+}
+
+/* Ícono Hamburguesa (Móvil) */
 .menu-icon {
   font-size: 2rem;
   cursor: pointer;
-  color: #333;
+  color: var(--text-dark);
   padding: 5px;
-  /* MARGEN DERECHO PARA QUE NO SE PEGUE AL BORDE */
-  margin-right: 15px; 
+  margin-right: 15px; /* Espacio para no pegarse al borde */
   transition: color 0.3s;
 }
-.menu-icon:hover { color: var(--pil-blue); }
 
-/* LINKS DE ESCRITORIO (Se ocultan en móvil) */
-.navbar-links { display: none; }
+.menu-icon:hover {
+  color: var(--pil-blue);
+}
+
+/* Enlaces de Escritorio (Ocultos por defecto en móvil) */
+.navbar-links {
+  display: none;
+}
 
 /* --- MEDIA QUERY (PANTALLAS GRANDES) --- */
 @media (min-width: 992px) {
-  /* En PC ocultamos la hamburguesa y mostramos los links */
+  /* En PC ocultamos la hamburguesa y mostramos los links normales */
   .menu-icon { display: none; }
   .navbar-links.desktop-only { display: flex; align-items: center; }
 }
 
-/* ESTILO DE LOS LINKS (Escritorio) */
+/* Estilos de Links (Escritorio) */
 .nav-link {
   color: var(--pil-blue);
   text-decoration: none;
   margin: 0 15px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
   transition: color 0.3s;
 }
-.nav-link:hover { color: var(--pil-red); }
 
-/* BOTÓN LOGOUT (Escritorio) */
+.nav-link:hover {
+  color: var(--pil-red);
+}
+
+/* Botón Cerrar Sesión (Escritorio) */
 .logout-btn {
   color: #555;
   background: transparent;
   border: 1px solid #ccc;
   padding: 8px 20px;
-  border-radius: 30px;
+  border-radius: 50px;
   font-weight: 700;
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
@@ -100,31 +118,34 @@ body, html {
   font-size: 0.75rem;
   transition: all 0.3s;
 }
-.logout-btn:hover { 
-  border-color: var(--pil-red); 
-  color: white; 
+
+.logout-btn:hover {
+  border-color: var(--pil-red);
   background-color: var(--pil-red);
+  color: white;
 }
 
-/* --- SIDEBAR (MENÚ LATERAL) --- */
+/* 5. MENÚ LATERAL (SIDEBAR) */
 .sidebar {
   position: fixed;
   top: 0;
-  /* Oculto a la derecha (ancho negativo) */
-  right: -280px; 
+  right: -280px; /* Oculto a la derecha */
   width: 280px;
   height: 100vh;
   background-color: white;
-  box-shadow: -5px 0 15px rgba(0,0,0,0.15);
+  
+  /* Sombra fuerte a la izquierda para destacar sobre el contenido */
+  box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+  
   z-index: 2000;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animación fluida */
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animación suave */
   display: flex;
   flex-direction: column;
+  padding-top: 0;
 }
 
-/* Clase para abrir el menú */
 .sidebar.open {
-  right: 0;
+  right: 0; /* Se desliza a la vista */
 }
 
 /* Botón Cerrar (X) */
@@ -140,13 +161,16 @@ body, html {
   transition: color 0.3s;
   z-index: 2001;
 }
-.close-btn:hover { color: var(--pil-red); }
+
+.close-btn:hover {
+  color: var(--pil-red);
+}
 
 /* Contenido del Sidebar */
 .sidebar-content {
   display: flex;
   flex-direction: column;
-  padding: 80px 20px 20px 20px;
+  padding: 80px 25px 25px 25px;
   height: 100%;
 }
 
@@ -156,7 +180,7 @@ body, html {
   color: #aaa;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
 }
@@ -169,40 +193,45 @@ body, html {
   font-weight: 600;
   font-size: 1.1rem;
   padding: 15px 10px;
-  border-bottom: 1px solid #f9f9f9;
+  border-bottom: 1px solid #fcfcfc;
   transition: all 0.2s;
 }
 
 .sidebar-link:hover {
   color: var(--pil-blue);
-  background-color: #f4f7f6;
-  padding-left: 15px;
+  background-color: #f8f9fa;
+  padding-left: 20px; /* Efecto de desplazamiento */
+  border-radius: 8px;
 }
 
-/* Botón Logout (Móvil) */
+/* Botón Cerrar Sesión (Móvil) */
 .sidebar .logout-btn {
   width: 100%;
   background-color: #333;
   color: white;
   border: none;
-  margin-top: 10px;
+  margin-top: 20px;
+  padding: 15px;
 }
-.sidebar .logout-btn:hover { background-color: var(--pil-red); }
 
-/* Overlay (Fondo oscuro) */
+.sidebar .logout-btn:hover {
+  background-color: var(--pil-red);
+}
+
+/* 6. OVERLAY (FONDO OSCURO) */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1500;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px); /* Efecto borroso moderno */
   animation: fadeIn 0.3s;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}   
+}

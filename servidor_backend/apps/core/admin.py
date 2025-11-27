@@ -1,6 +1,6 @@
 from django.contrib import admin
 # Asegúrate de importar los nuevos modelos
-from .models import Conductor, Vehiculo, Ruta, Cliente, Pedido, Categoria, Producto, DetallePedido
+from .models import Conductor, Vehiculo, Ruta, Cliente, Pedido, Categoria, Producto, DetallePedido, Incidencia
 
 # (Tus registros existentes están aquí)
 admin.site.register(Conductor)
@@ -13,3 +13,4 @@ admin.site.register(Pedido)
 admin.site.register(Categoria)
 admin.site.register(Producto)
 admin.site.register(DetallePedido)
+admin.site.register(Incidencia)
